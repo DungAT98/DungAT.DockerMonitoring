@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "library", "library", "{FAF8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungAT.DockerMonitoring.Models", "DungAT.DockerMonitoring.Models\DungAT.DockerMonitoring.Models.csproj", "{F8ED0C1E-AC47-4BAB-95CA-9E3332575693}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{AF14F80A-C643-44DD-A956-82A3A217D773}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungAT.DockerMonitoring.WebApi", "DungAT.DockerMonitoring.WebApi\DungAT.DockerMonitoring.WebApi.csproj", "{7F07DD3E-F725-4306-A61D-58D842145639}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,10 +32,15 @@ Global
 		{F8ED0C1E-AC47-4BAB-95CA-9E3332575693}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8ED0C1E-AC47-4BAB-95CA-9E3332575693}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8ED0C1E-AC47-4BAB-95CA-9E3332575693}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F07DD3E-F725-4306-A61D-58D842145639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F07DD3E-F725-4306-A61D-58D842145639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F07DD3E-F725-4306-A61D-58D842145639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F07DD3E-F725-4306-A61D-58D842145639}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{06CF9C68-0CFD-4A89-8003-0170412214C9} = {2A2FC6AA-CA00-479D-B717-28DA9F41BFDB}
 		{71862457-0139-4DB5-8DEB-1C384529F67D} = {FAF80AD2-4E42-473D-86E1-D1FF37E177C2}
 		{F8ED0C1E-AC47-4BAB-95CA-9E3332575693} = {FAF80AD2-4E42-473D-86E1-D1FF37E177C2}
+		{7F07DD3E-F725-4306-A61D-58D842145639} = {AF14F80A-C643-44DD-A956-82A3A217D773}
 	EndGlobalSection
 EndGlobal
