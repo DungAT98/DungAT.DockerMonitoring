@@ -9,15 +9,11 @@ public static class HangfireExtensions
 {
     public static WebApplicationBuilder UseHangfire(this WebApplicationBuilder builder)
     {
-        
         builder.Services.AddHangfire(config =>
             config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(builder.Configuration.GetConnectionString("DatabaseConnection"), new SqlServerStorageOptions
-                {
-                    
-                }));
+                .UseSqlServerStorage(builder.Configuration.GetConnectionString("DatabaseConnection")));
         builder.Services.AddHangfireServer();
 
         return builder;
@@ -32,4 +28,5 @@ public static class HangfireExtensions
         
         return builder;
     }
+   
 }

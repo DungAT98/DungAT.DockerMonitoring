@@ -2,7 +2,7 @@ version: "3"
 services:
   dungat-dockermonitoring:
     build: ./DungAT.DockerMonitoring.WebApi
-    depends_on: 
+    depends_on:
       - sqlserver-container
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -10,7 +10,8 @@ services:
     ports:
       - "5000:80"
   sqlserver-container:
-    build: ./mssql
+    #    build: ./mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
     user: root
     hostname: sqlserver-container
     container_name: sqlserver-container
