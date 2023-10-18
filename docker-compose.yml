@@ -1,0 +1,28 @@
+version: "3"
+services:
+  dungat-dockermonitoring:
+    build: ./DungAT.DockerMonitoring.WebApi
+    depends_on: 
+      - sqlserver-container
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DatabaseConnection=Server=sqlserver-container;Database=docker-monitoring;User Id=sa;Password=q{5tS]jW#e>%vm:Dr?F=bB;TrustServerCertificate=true;
+    ports:
+      - "5000:80"
+  sqlserver-container:
+    build: ./mssql
+    user: root
+    hostname: sqlserver-container
+    container_name: sqlserver-container
+    environment:
+      ACCEPT_EULA: Y
+      TZ: UTC
+      MSSQL_SA_PASSWORD: q{5tS]jW#e>%vm:Dr?F=bB
+    volumes:
+      - sqlserver_data:/var/opt/mssql/data
+      - sqlserver_log:/var/opt/mssql/log
+      - sqlserver_secrets:/var/opt/mssql/secrets
+volumes:
+  sqlserver_data:
+  sqlserver_log:
+  sqlserver_secrets:
