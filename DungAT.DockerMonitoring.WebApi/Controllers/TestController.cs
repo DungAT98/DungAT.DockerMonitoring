@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DungAT.DockerMonitoring.Application.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DungAT.DockerMonitoring.WebApi.Controllers;
 
@@ -6,9 +7,17 @@ namespace DungAT.DockerMonitoring.WebApi.Controllers;
 [Route("[controller]")]
 public class TestController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult Index()
+    private readonly IDockerService _dockerService;
+
+    public TestController(IDockerService dockerService)
     {
-        return Ok("Hello World!");
+        _dockerService = dockerService;
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var result = await _dockerService.GetAllContainersAsync();
+        return Ok(result);
     }
 }

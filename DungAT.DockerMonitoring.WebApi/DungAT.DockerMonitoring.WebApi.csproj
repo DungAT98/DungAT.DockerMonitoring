@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>18dc2844-a599-45f3-8945-5bd79944a272</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +20,10 @@
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DungAT.DockerMonitoring.Application\DungAT.DockerMonitoring.Application.csproj" />
     </ItemGroup>
 
 </Project>

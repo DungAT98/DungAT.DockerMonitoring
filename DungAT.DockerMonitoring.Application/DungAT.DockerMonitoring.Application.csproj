@@ -8,11 +8,22 @@
 
     <ItemGroup>
       <PackageReference Include="Docker.DotNet" Version="3.125.15" />
+      <PackageReference Include="RestSharp" Version="110.2.0" />
     </ItemGroup>
 
 
     <ItemGroup>
       <ProjectReference Include="..\DungAT.DockerMonitoring.Models\DungAT.DockerMonitoring.Models.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.10\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.Extensions.Options">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.10\Microsoft.Extensions.Options.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

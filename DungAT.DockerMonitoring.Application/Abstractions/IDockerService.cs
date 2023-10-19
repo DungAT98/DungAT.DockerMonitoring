@@ -2,7 +2,7 @@
 
 namespace DungAT.DockerMonitoring.Application.Abstractions;
 
-public interface IDockerMonitoring
+public interface IDockerService
 {
     Task<List<ContainerViewModels>> GetAllContainersAsync();
 }

@@ -7,4 +7,8 @@ public class ContainerViewModels
     public string Image { get; set; } = default!;
 
     public string Status { get; set; } = default!;
+
+    public string State { get; set; } = default!;
+
+    public string ContainerName { get; set; } = default!;
 }
