@@ -1,6 +1,8 @@
-﻿namespace DungAT.DockerMonitoring.Models.Configurations;
+﻿using DungAT.DockerMonitoring.Models.Abstractions;
 
-public class CloudFlareConfiguration
+namespace DungAT.DockerMonitoring.Models.Configurations;
+
+public class CloudFlareConfiguration : IDnsConfiguration
 {
     public string ZoneId { get; set; } = default!;
 

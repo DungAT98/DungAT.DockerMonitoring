@@ -1,6 +1,7 @@
 ﻿using DungAT.DockerMonitoring.Application.Abstractions;
 using DungAT.DockerMonitoring.Application.Services;
 using DungAT.DockerMonitoring.Models.Configurations;
+using Serilog;
 
 namespace DungAT.DockerMonitoring.WebApi.Extensions;
 
@@ -15,7 +16,7 @@ public static class ServiceCollectionExtensions
         
         serviceCollection.AddOptions<List<CloudFlareConfiguration>>().Configure<IConfiguration>((setting, configuration) =>
         {
-            configuration.GetSection("CloudFlareConfiguration").Bind(setting);
+            configuration.GetSection("CloudFlareConfigurations").Bind(setting);
         });
 
         return serviceCollection;

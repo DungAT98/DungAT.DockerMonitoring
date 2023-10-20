@@ -1,6 +1,8 @@
+using DungAT.DockerMonitoring.WebApi.BackgroundServices;
 using DungAT.DockerMonitoring.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args)
+    .AddSerilog()
     .UseHangfire();
 
 // Add services to the container.
@@ -10,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .RegisterConfigurations()
     .RegisterServices();
+
+builder.Services.AddHostedService<LifetimeEventsHostedService>();
 
 var app = builder.Build();
 

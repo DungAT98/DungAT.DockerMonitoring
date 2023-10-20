@@ -1,28 +1,32 @@
 ﻿using DungAT.DockerMonitoring.Application.Abstractions;
+using DungAT.DockerMonitoring.Models.Abstractions;
 using DungAT.DockerMonitoring.Models.Configurations;
 using DungAT.DockerMonitoring.Models.RequestModels;
 using DungAT.DockerMonitoring.Models.ResponseModels;
+using Hangfire.Console.Extensions;
 using Microsoft.Extensions.Logging;
 using RestSharp;
+using RestSharp.Authenticators;
 
 namespace DungAT.DockerMonitoring.Application.Services;
 
 public class CloudFlareDnsUpdateService : IDnsUpdateService
 {
-    private readonly CloudFlareConfiguration _cloudflareConfiguration;
     private readonly ILogger<CloudFlareDnsUpdateService> _logger;
+    private readonly IJobManager _jobManager;
 
-    public CloudFlareDnsUpdateService(CloudFlareConfiguration cloudflareConfiguration, ILogger<CloudFlareDnsUpdateService> logger)
+    public CloudFlareDnsUpdateService(ILogger<CloudFlareDnsUpdateService> logger, IJobManager jobManager)
     {
-        _cloudflareConfiguration = cloudflareConfiguration;
         _logger = logger;
+        _jobManager = jobManager;
     }
 
-    public async Task UpdateAsync(string currentIpAddress)
+    public async Task UpdateAsync(IDnsConfiguration dnsConfiguration, string currentIpAddress)
     {
-        var restClient = new RestClient("https://api.cloudflare.com");
-        var currentDnsRecords = await GetAllCurrentDnsRecordsAsync();
-        foreach (var domainName in _cloudflareConfiguration.DomainNames)
+        var cloudflareConfiguration = dnsConfiguration as CloudFlareConfiguration;
+        var restClient = GetRestClient(cloudflareConfiguration!);
+        var currentDnsRecords = await GetAllCurrentDnsRecordsAsync(cloudflareConfiguration!);
+        foreach (var domainName in cloudflareConfiguration!.DomainNames)
         {
             var record = currentDnsRecords.FirstOrDefault(x => x.Name == domainName);
             if (record == null)
@@ -30,9 +34,15 @@ public class CloudFlareDnsUpdateService : IDnsUpdateService
                 _logger.LogWarning("Cannot find DNS record for domain {DomainName}", domainName);
                 continue;
             }
-            
+
+            if (record.Content == currentIpAddress)
+            {
+                _logger.LogInformation("DNS record for domain {DomainName} is up to date", domainName);
+                continue;
+            }
+
             var request = new RestRequest("client/v4/zones/{zoneId}/dns_records/{id}", Method.Put);
-            request.AddUrlSegment("zoneId", _cloudflareConfiguration.ZoneId);
+            request.AddUrlSegment("zoneId", cloudflareConfiguration.ZoneId);
             request.AddUrlSegment("id", record.Id);
             var command = new CloudFlareUpdateDnsRequestModel
             {
@@ -43,7 +53,7 @@ public class CloudFlareDnsUpdateService : IDnsUpdateService
                 Proxied = record.Proxied,
                 Ttl = record.Ttl
             };
-            
+
             request.AddJsonBody(command);
             var response = await restClient.ExecutePutAsync(request);
             if (response.IsSuccessful)
@@ -57,23 +67,26 @@ public class CloudFlareDnsUpdateService : IDnsUpdateService
         }
     }
 
-    public async Task UpdateAsync()
+    public async Task UpdateAsync(IDnsConfiguration cloudflareConfiguration)
     {
         var currentIpAddress = await GetCurrentIpAddress();
-        await UpdateAsync(currentIpAddress);
+        await UpdateAsync(cloudflareConfiguration, currentIpAddress);
     }
 
-    private async Task<List<CloudFlareDnsResponseModel>> GetAllCurrentDnsRecordsAsync()
+    private async Task<List<CloudFlareDnsResponseModel>> GetAllCurrentDnsRecordsAsync(
+        IDnsConfiguration dnsConfiguration)
     {
-        var restClient = new RestClient("https://api.cloudflare.com");
+        var cloudflareConfiguration = dnsConfiguration as CloudFlareConfiguration;
+        var restClient = GetRestClient(cloudflareConfiguration!);
         var request = new RestRequest("client/v4/zones/{zoneId}/dns_records");
-        request.AddUrlSegment("zoneId", _cloudflareConfiguration.ZoneId);
+        request.AddUrlSegment("zoneId", cloudflareConfiguration!.ZoneId);
         // maximum page size in cloudflare is 50000
         request.AddQueryParameter("per_page", 50000);
-        var response = await restClient.ExecuteGetAsync<List<CloudFlareDnsResponseModel>>(request);
+        var response =
+            await restClient.ExecuteGetAsync<BaseCloudFlareResponseModel<CloudFlareDnsResponseModel>>(request);
         if (response is { IsSuccessful: true, Content: not null, Data: not null })
         {
-            return response.Data;
+            return response.Data.Result;
         }
 
         throw new Exception("Cannot get current DNS records");
@@ -90,5 +103,16 @@ public class CloudFlareDnsUpdateService : IDnsUpdateService
         }
 
         throw new Exception("Cannot get current IP address");
+    }
+
+    private RestClient GetRestClient(IDnsConfiguration dnsConfiguration)
+    {
+        var cloudflareConfiguration = dnsConfiguration as CloudFlareConfiguration;
+        var restClientOption = new RestClientOptions("https://api.cloudflare.com")
+        {
+            Authenticator = new JwtAuthenticator(cloudflareConfiguration!.ApiKey)
+        };
+
+        return new RestClient(restClientOption);
     }
 }
