@@ -3,7 +3,6 @@ using DungAT.DockerMonitoring.Models.Abstractions;
 using DungAT.DockerMonitoring.Models.Configurations;
 using DungAT.DockerMonitoring.Models.RequestModels;
 using DungAT.DockerMonitoring.Models.ResponseModels;
-using Hangfire.Console.Extensions;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -13,12 +12,10 @@ namespace DungAT.DockerMonitoring.Application.Services;
 public class CloudFlareDnsUpdateService : IDnsUpdateService
 {
     private readonly ILogger<CloudFlareDnsUpdateService> _logger;
-    private readonly IJobManager _jobManager;
 
-    public CloudFlareDnsUpdateService(ILogger<CloudFlareDnsUpdateService> logger, IJobManager jobManager)
+    public CloudFlareDnsUpdateService(ILogger<CloudFlareDnsUpdateService> logger)
     {
         _logger = logger;
-        _jobManager = jobManager;
     }
 
     public async Task UpdateAsync(IDnsConfiguration dnsConfiguration, string currentIpAddress)
@@ -82,6 +79,7 @@ public class CloudFlareDnsUpdateService : IDnsUpdateService
         request.AddUrlSegment("zoneId", cloudflareConfiguration!.ZoneId);
         // maximum page size in cloudflare is 50000
         request.AddQueryParameter("per_page", 50000);
+        request.AddQueryParameter("type", "A");
         var response =
             await restClient.ExecuteGetAsync<BaseCloudFlareResponseModel<CloudFlareDnsResponseModel>>(request);
         if (response is { IsSuccessful: true, Content: not null, Data: not null })

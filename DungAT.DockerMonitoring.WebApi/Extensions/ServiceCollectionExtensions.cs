@@ -18,6 +18,11 @@ public static class ServiceCollectionExtensions
         {
             configuration.GetSection("CloudFlareConfigurations").Bind(setting);
         });
+        
+        serviceCollection.AddOptions<List<DuckDnsConfiguration>>().Configure<IConfiguration>((setting, configuration) =>
+        {
+            configuration.GetSection("DuckDnsConfigurations").Bind(setting);
+        });
 
         return serviceCollection;
     }
@@ -25,7 +30,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IDockerService, DockerService>();
-        serviceCollection.AddScoped<IDnsUpdateService, CloudFlareDnsUpdateService>();
         return serviceCollection;
     }
 }

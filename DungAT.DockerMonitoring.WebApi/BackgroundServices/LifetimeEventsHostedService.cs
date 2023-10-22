@@ -10,15 +10,18 @@ public class LifetimeEventsHostedService : IHostedService
     private readonly ILogger _logger;
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly IOptions<List<CloudFlareConfiguration>> _cloudFlareConfigurations;
+    private readonly IOptions<List<DuckDnsConfiguration>> _duckDnsConfigurations;
     private const string CronExpression = "*/1 * * * *";
 
     public LifetimeEventsHostedService(
         ILogger<LifetimeEventsHostedService> logger,
-        IHostApplicationLifetime appLifetime, IOptions<List<CloudFlareConfiguration>> cloudFlareConfigurations)
+        IHostApplicationLifetime appLifetime, IOptions<List<CloudFlareConfiguration>> cloudFlareConfigurations,
+        IOptions<List<DuckDnsConfiguration>> duckDnsConfigurations)
     {
         _logger = logger;
         _appLifetime = appLifetime;
         _cloudFlareConfigurations = cloudFlareConfigurations;
+        _duckDnsConfigurations = duckDnsConfigurations;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -44,6 +47,13 @@ public class LifetimeEventsHostedService : IHostedService
             RecurringJob.AddOrUpdate<CloudFlareDnsUpdateService>(
                 $"{typeof(CloudFlareDnsUpdateService)} - {cloudFlareConfiguration.DomainNames.FirstOrDefault()}",
                 n => n.UpdateAsync(cloudFlareConfiguration), CronExpression);
+        }
+
+        foreach (var duckDnsConfiguration in _duckDnsConfigurations.Value)
+        {
+            RecurringJob.AddOrUpdate<DuckDnsUpdateService>(
+                $"{typeof(DuckDnsUpdateService)} - {duckDnsConfiguration.DomainNames.FirstOrDefault()}",
+                n => n.UpdateAsync(duckDnsConfiguration), CronExpression);
         }
     }
 
