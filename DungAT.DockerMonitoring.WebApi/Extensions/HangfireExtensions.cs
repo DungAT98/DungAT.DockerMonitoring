@@ -1,4 +1,5 @@
 using DungAT.DockerMonitoring.WebApi.Filters;
+using DungAT.DockerMonitoring.WebApi.Infrastructures;
 using Hangfire;
 using Hangfire.Console;
 
@@ -15,7 +16,10 @@ public static class HangfireExtensions
                 .UseRecommendedSerializerSettings()
                 .UseSerilogLogProvider()
                 .UseSqlServerStorage(builder.Configuration.GetConnectionString("DatabaseConnection")));
-        builder.Services.AddHangfireServer();
+        builder.Services.AddHangfireServer((serviceProvider, options) =>
+        {
+            options.Activator = new ServiceProviderJobActivator(serviceProvider);
+        });
 
         return builder;
     }

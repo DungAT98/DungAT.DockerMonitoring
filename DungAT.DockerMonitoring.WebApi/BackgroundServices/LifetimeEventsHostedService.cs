@@ -7,7 +7,7 @@ namespace DungAT.DockerMonitoring.WebApi.BackgroundServices;
 
 public class LifetimeEventsHostedService : IHostedService
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<LifetimeEventsHostedService> _logger;
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly IOptions<List<CloudFlareConfiguration>> _cloudFlareConfigurations;
     private readonly IOptions<List<DuckDnsConfiguration>> _duckDnsConfigurations;
@@ -41,7 +41,7 @@ public class LifetimeEventsHostedService : IHostedService
     private void OnStarted()
     {
         _logger.LogInformation("OnStarted has been called");
-
+        
         foreach (var cloudFlareConfiguration in _cloudFlareConfigurations.Value)
         {
             RecurringJob.AddOrUpdate<CloudFlareDnsUpdateService>(

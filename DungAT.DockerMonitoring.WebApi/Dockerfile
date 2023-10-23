@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["./DungAT.DockerMonitoring.WebApi.csproj", "./"]
-RUN dotnet restore "./DungAT.DockerMonitoring.WebApi.csproj"
+COPY ["DungAT.DockerMonitoring.WebApi/DungAT.DockerMonitoring.WebApi.csproj", "DungAT.DockerMonitoring.WebApi/"]
+RUN dotnet restore "DungAT.DockerMonitoring.WebApi/DungAT.DockerMonitoring.WebApi.csproj"
 COPY . .
-WORKDIR "/src"
+WORKDIR "/src/DungAT.DockerMonitoring.WebApi"
 RUN dotnet build "DungAT.DockerMonitoring.WebApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
