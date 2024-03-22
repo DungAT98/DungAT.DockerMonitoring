@@ -10,12 +10,14 @@ public static class HangfireExtensions
     public static WebApplicationBuilder UseHangfire(this WebApplicationBuilder builder)
     {
         builder.Services.AddHangfire(config =>
-            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                .UseConsole()
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSerilogLogProvider()
-                .UseSqlServerStorage(builder.Configuration.GetConnectionString("DatabaseConnection")));
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseConsole()
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSerilogLogProvider()
+                    .UseInMemoryStorage()
+            // .UseSqlServerStorage(builder.Configuration.GetConnectionString("DatabaseConnection"))
+        );
         builder.Services.AddHangfireServer((serviceProvider, options) =>
         {
             options.Activator = new ServiceProviderJobActivator(serviceProvider);
